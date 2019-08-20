@@ -31,23 +31,27 @@ open classical
 
 /- Vamos trabalhar as possibilidades de quem disse cada resposta para
 concluirmos algumas hipóteses.
-Se supormos que Ana estava de azul, chegamos a um absurdo, pois ela
-nunca mente, mas teria dito que ela estava de branco. -/
-variable h1 : AA → false
+Se supormos que Ana estava de azul, encontramos que Ana estava de
+branco, pois ela não mente. -/
+variable h1 : AA → AB
 /-Se supormos que Maria estava de branco, não concluimos nada. Na
 verdade, não concluimos nada supondo que Maria estava usando alguma
 cor, pois não temos certeza se ela mente ou fala a verdade.
 Se supormos que Cláudia está vestindo azul, temos, pela sua resposta,
 que Ana não está usando branco! -/
 variable h2 : CA → ¬ AB
--- Suponhamos que Ana esteja de branco: absurdo.
-variable h3 : AB → false
-/- Além disso, não conseguimos concluir nada supondo que Cláudia
-esteja de branco.
+/- Suponhamos que Ana esteja de branco: então quem está de branco fala
+sempre a verdade, de modo que Maria está de branco.-/
+variable h3 : AB → MB
+/- Se Cládia estava de branco, então a pessoa que estava de branco não
+é a Maria, pois sempre mente. Porém, isso não significa que Maria não
+estava de branco.
 Suponhamos que Ana esteja de preto: então Cláudia está de branco:-/
 variable h4 : AP → CB
-/- Suponhamos que Cláudia esteja vestindo preto: não concluimos nada.
-Além disso, temos que: Ana está vestindo azul, branco ou preto: -/
+/- Suponhamos que Cláudia esteja vestindo preto: a pessoa que está
+vestindo preto está mentindo, logo Cláudia não está de branco:-/
+variable h48 : CP -> ¬ CB
+--Além disso, temos que: Ana está vestindo azul, branco ou preto:
 variable h5 : AA ∨ AB ∨ AP
 variable h6 : MA ∨ MB ∨ MP
 variable h7 : CA ∨ CB ∨ CP
@@ -66,6 +70,17 @@ variable h25 : MP → (¬ MA ∧ ¬ MB)
 variable h26 : CA → (¬ CB ∧ ¬ CP)
 variable h27 : CB → (¬ CA ∧ ¬ CP)
 variable h28 : CP → (¬ CA ∧ ¬ CB)
+/- Também é razoável assumir que apenas uma pessoa pode vestir uma
+cor de vestido:-/
+variable h38 : AA → (¬ MA ∧ ¬ CA)
+variable h39 : AB → (¬ MB ∧ ¬ CB)
+variable h40 : AP → (¬ MP ∧ ¬ CP)
+variable h41 : MA → (¬ AA ∧ ¬ CA)
+variable h42 : MB → (¬ AB ∧ ¬ CB)
+variable h43 : MP → (¬ AP ∧ ¬ CP)
+variable h44 : CA → (¬ AA ∧ ¬ MA)
+variable h45 : CB → (¬ AB ∧ ¬ MB)
+variable h46 : CP → (¬ AP ∧ ¬ MP)
 
 example : AP ∧ MA ∧ CB :=
   have h11 : AP, from
@@ -74,12 +89,21 @@ example : AP ∧ MA ∧ CB :=
     show false, from
       or.elim h5
         (assume h14 : AA,
-        show false, from h1 h14)
+        have h36 : AA → false, from
+          (assume h37 : AA,
+          show false, from 
+            (show ¬ AB, from and.left (h20 h37)) 
+            (show AB, from h1 h37)),
+        show false, from h36 h14)
         (assume h15 : AB ∨ AP,
         show false, from
           or.elim h15
             (assume h16 : AB,
-            show false, from h3 h16)
+            have h37 : AB → false, from 
+              (assume h47 : AB,
+                (show ¬ MB, from and.left (h39 h47))
+                (show MB, from h3 h47)),
+            show false, from h37 h16)
             (assume h17 : AP,
             show false, from h13 h17))),
   have h19 : CB, from h4 h11,
