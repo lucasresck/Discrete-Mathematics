@@ -1,4 +1,4 @@
-variables A B C P Q R: Prop
+variables A B C D E F P Q R: Prop
 
 open classical
 
@@ -71,7 +71,82 @@ theorem exercise_6 : A → ((A ∧ B) ∨ (A ∧ ¬ B)) :=
     have h3 : (A ∧ B) ∨ (A ∧ ¬ B), from or.inr h4,
     show false, from h2 h3))
 
---Exercise 8
+-- Exercise 7
+
+lemma fifth_or_elim {A B C D E F : Prop}
+(h3 : B) (h5 : C) (h6 : E ∨ F) :
+((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)) :=
+    or.elim h6
+        (assume h7 : E,
+        show ((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+        ((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)), from or.inl (or.inr (or.inr (and.intro h5 h7))))
+        (assume h7 : F,
+        show ((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+        ((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)), from or.inr (or.inr (or.inl (and.intro h3 h7))))
+
+lemma fourth_or_elim {A B C D E F : Prop}
+(h1 : (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F)) (h3 : B) (h4 : C ∨ D) :
+((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)) :=
+    or.elim h4
+    (assume h5 : C,
+    have h6 : E ∨ F, from and.right (and.right h1),
+    show ((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+    ((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)), from fifth_or_elim h3 h5 h6)
+    (assume h5 : D,
+    show ((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+    ((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)), from or.inr (or.inl (and.intro h3 h5)))
+
+lemma third_or_elim {A B C D E F : Prop}
+(h3 : A) (h5 : D) (h6 : E ∨ F) :
+((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)) :=
+    or.elim h6
+        (assume h7 : E,
+        show ((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+        ((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)), from or.inl (or.inr (or.inl (and.intro h3 h7))))
+        (assume h7 : F,
+        show ((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+        ((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)), from or.inr (or.inr (or.inr (and.intro h5 h7))))
+
+lemma second_or_elim {A B C D E F : Prop}
+(h1 : (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F)) (h3 : A) (h4 : C ∨ D) :
+((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)) :=
+    or.elim h4
+    (assume h5 : C,
+    have h6 : E ∨ F, from and.right (and.right h1),
+    show ((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+    ((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)), from or.inl (or.inl (and.intro h3 h5)))
+    (assume h5 : D,
+    have h6 : E ∨ F, from and.right (and.right h1),
+    show ((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+    ((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)), from third_or_elim h3 h5 h6)
+
+lemma first_or_elim {A B C D E F : Prop}
+(h1 : (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F)) (h2 : A ∨ B) :
+((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)) :=
+    or.elim h2
+    (assume h3 : A,
+    have h4 : C ∨ D, from and.left (and.right h1),
+    show ((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+    ((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)), from second_or_elim h1 h3 h4)
+    (assume h3 : B,
+    have h4 : C ∨ D, from and.left (and.right h1),
+    show ((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+    ((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)), from fourth_or_elim h1 h3 h4)
+
+theorem exercise_7 : (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F) → 
+((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)) :=
+    assume h1 : (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F),
+    have h2 : A ∨ B, from and.left h1,
+    show ((A ∧ C) ∨ (A ∧ E) ∨ (C ∧ E)) ∨
+    ((B ∧ D) ∨ (B ∧ F) ∨ (D ∧ F)), from first_or_elim h1 h2
+
+-- Exercise 8
 
 -- Prove ¬ (A ∧ B) → ¬ A ∨ ¬ B by replacing the sorry's below
 -- by proofs.
@@ -94,7 +169,7 @@ by_contradiction
   (assume h' : ¬ (¬ A ∨ ¬ B),
     show false, from step2 h h')
 
---Exercise 9
+-- Exercise 9
 
 example (h : ¬ B → ¬ A) : A → B :=
   assume h1 : A,
