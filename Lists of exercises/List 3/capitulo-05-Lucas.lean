@@ -71,10 +71,76 @@ theorem exercise_6 : A → ((A ∧ B) ∨ (A ∧ ¬ B)) :=
     have h3 : (A ∧ B) ∨ (A ∧ ¬ B), from or.inr h4,
     show false, from h2 h3))
 
+-- Exercise 7
+
+
+/-lemma fifth {A B C D E F : Prop}
+(h1 : ((B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F))) ∨ ((B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F)))): (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F) :=
+or.elim h1
+(assume h2 : (B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F)),
+show (B ∧ A) ∧ (C ∨ D) ∧ (E ∨ F), from third h2)
+(assume h2 : (B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F))),
+show (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F), from fourth h2)-/
+
+lemma third {A B C D E F : Prop} (h1 : (A ∧ (C ∧ E)) ∨ (A ∧ (C ∧ F))): (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F) :=
+    or.elim h1
+    (assume h2 : A ∧ (C ∧ E),
+    have h3 : A ∨ B, from or.inl (and.left h2),
+    have h4 : C ∧ E, from and.right h2,
+    have h5 : C ∨ D, from or.inl (and.left h4),
+    have h6 : E ∨ F, from or.inl (and.right h4),
+    show (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F), from and.intro h3 (and.intro h5 h6))
+    (assume h2 : A ∧ (C ∧ F),
+    have h3 : A ∨ B, from or.inl (and.left h2),
+    have h4 : C ∧ F, from and.right h2,
+    have h5 : C ∨ D, from or.inl (and.left h4),
+    have h6 : E ∨ F, from or.inr (and.right h4),
+    show (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F), from and.intro h3 (and.intro h5 h6))
+
+lemma switch {A B : Prop} (h1 : A ∨ B) : B ∨ A :=
+    or.elim h1
+    (assume h2 : A,
+    show B ∨ A, from or.inr h2)
+    (assume h2 : B,
+    show B ∨ A, from or.inl h2)
+
+lemma second {A B C D E F : Prop}
+(h1 : ((A ∧ (C ∧ E)) ∨ (A ∧ (C ∧ F))) ∨ ((A ∧ (D ∧ E)) ∨ (A ∧ (D ∧ F)))): (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F) :=
+    or.elim h1
+    (assume h2 : (A ∧ (C ∧ E)) ∨ (A ∧ (C ∧ F)),
+    show (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F), from third h2)
+    (assume h2 : (A ∧ (D ∧ E)) ∨ (A ∧ (D ∧ F)),
+    -- Now I can use third lemma again, but later I will have to switch C and D
+    have h3 : (A ∨ B) ∧ (D ∨ C) ∧ (E ∨ F), from third h2,
+    have h4 : A ∨ B, from and.left h3,
+    have h5 : D ∨ C, from and.left (and.right h3),
+    have h6 : C ∨ D, from switch h5,
+    have h7 : E ∨ F, from and.right (and.right h3),
+    show (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F), from and.intro h4 (and.intro h6 h7))
+
+lemma first {A B C D E F : Prop}
+(h1 : (((A ∧ (C ∧ E)) ∨ (A ∧ (C ∧ F))) ∨ ((A ∧ (D ∧ E)) ∨ (A ∧ (D ∧ F)))) ∨
+(((B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F))) ∨ ((B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F))))): (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F) :=
+    or.elim h1
+    (assume h2 : ((A ∧ (C ∧ E)) ∨ (A ∧ (C ∧ F))) ∨ ((A ∧ (D ∧ E)) ∨ (A ∧ (D ∧ F))),
+    show (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F), from second h2)
+    (assume h2 : ((B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F))) ∨ ((B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F))),
+    have h3 : (B ∨ A) ∧ (C ∨ D) ∧ (E ∨ F), from second h2,
+    have h4 : B ∨ A, from and.left h3,
+    have h5 : A ∨ B, from switch h4,
+    have h6 : (C ∨ D) ∧ (E ∨ F), from and.right h3,
+    show (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F), from and.intro h5 h6)
+
 theorem exercise_7 : (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F) ↔
 (((A ∧ (C ∧ E)) ∨ (A ∧ (C ∧ F))) ∨ ((A ∧ (D ∧ E)) ∨ (A ∧ (D ∧ F)))) ∨
-(((B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F))) ∨ ((B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F))))
-:= sorry
+(((B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F))) ∨ ((B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F)))) :=
+    iff.intro
+    (assume h1 : (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F),
+    show (((A ∧ (C ∧ E)) ∨ (A ∧ (C ∧ F))) ∨ ((A ∧ (D ∧ E)) ∨ (A ∧ (D ∧ F)))) ∨
+    (((B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F))) ∨ ((B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F)))), from sorry)
+    (assume h1 : (((A ∧ (C ∧ E)) ∨ (A ∧ (C ∧ F))) ∨ ((A ∧ (D ∧ E)) ∨ (A ∧ (D ∧ F)))) ∨
+    (((B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F))) ∨ ((B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F)))),
+    show (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F), from first h1)
 
 -- Exercise 8
 
@@ -82,22 +148,22 @@ theorem exercise_7 : (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F) ↔
 -- by proofs.
 
 lemma step1 {A B : Prop} (h₁ : ¬ (A ∧ B)) (h₂ : A) : ¬ A ∨ ¬ B :=
-have ¬ B, from 
-  (assume h₃ : B,
-  show false, from h₁ (and.intro h₂ h₃)),
-show ¬ A ∨ ¬ B, from or.inr this
+    have ¬ B, from 
+    (assume h₃ : B,
+    show false, from h₁ (and.intro h₂ h₃)),
+    show ¬ A ∨ ¬ B, from or.inr this
 
 lemma step2 {A B : Prop} (h₁ : ¬ (A ∧ B)) (h₂ : ¬ (¬ A ∨ ¬ B)) : false :=
-have ¬ A, from
-  assume : A,
-  have ¬ A ∨ ¬ B, from step1 h₁ ‹A›,
-  show false, from h₂ this,
-show false, from h₂ (or.inl this)
+    have ¬ A, from
+    assume : A,
+    have ¬ A ∨ ¬ B, from step1 h₁ ‹A›,
+    show false, from h₂ this,
+    show false, from h₂ (or.inl this)
 
 theorem step3 (h : ¬ (A ∧ B)) : ¬ A ∨ ¬ B :=
-by_contradiction
-  (assume h' : ¬ (¬ A ∨ ¬ B),
-    show false, from step2 h h')
+    by_contradiction
+    (assume h' : ¬ (¬ A ∨ ¬ B),
+        show false, from step2 h h')
 
 -- Exercise 9
 
