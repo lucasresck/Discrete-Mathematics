@@ -73,14 +73,40 @@ theorem exercise_6 : A → ((A ∧ B) ∨ (A ∧ ¬ B)) :=
 
 -- Exercise 7
 
-
-/-lemma fifth {A B C D E F : Prop}
-(h1 : ((B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F))) ∨ ((B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F)))): (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F) :=
-or.elim h1
-(assume h2 : (B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F)),
-show (B ∧ A) ∧ (C ∨ D) ∧ (E ∨ F), from third h2)
-(assume h2 : (B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F))),
-show (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F), from fourth h2)-/
+lemma fourth {A B C D E F : Prop} (h1 : A ∨ B) (h2 : C ∨ D) (h3 : E ∨ F) :
+(((A ∧ (C ∧ E)) ∨ (A ∧ (C ∧ F))) ∨ ((A ∧ (D ∧ E)) ∨ (A ∧ (D ∧ F)))) ∨
+(((B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F))) ∨ ((B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F)))) :=
+-- I will now suppose very each case above, and include the other terms of conjunction
+    or.elim h1
+    (assume h4 : A,
+        or.elim h2
+        (assume h5 : C,
+            or.elim h3
+            (assume h6 : E,
+            -- I have now A ∧ C ∧ E, so I can have all the proposition, like bellow
+            or.inl (or.inl (or.inl (and.intro h4 (and.intro h5 h6)))))
+            (assume h6 : F,
+            or.inl (or.inl (or.inr (and.intro h4 (and.intro h5 h6))))))
+        (assume h5 : D,
+            or.elim h3
+            (assume h6 : E,
+            or.inl (or.inr (or.inl (and.intro h4 (and.intro h5 h6)))))
+            (assume h6 : F,
+            or.inl (or.inr (or.inr (and.intro h4 (and.intro h5 h6)))))))
+    (assume h4 : B,
+        or.elim h2
+        (assume h5 : C,
+            or.elim h3
+            (assume h6 : E,
+            or.inr (or.inl (or.inl (and.intro h4 (and.intro h5 h6)))))
+            (assume h6 : F,
+            or.inr (or.inl (or.inr (and.intro h4 (and.intro h5 h6))))))
+        (assume h5 : D,
+            or.elim h3
+            (assume h6 : E,
+            or.inr (or.inr (or.inl (and.intro h4 (and.intro h5 h6)))))
+            (assume h6 : F,
+            or.inr (or.inr (or.inr (and.intro h4 (and.intro h5 h6)))))))
 
 lemma third {A B C D E F : Prop} (h1 : (A ∧ (C ∧ E)) ∨ (A ∧ (C ∧ F))): (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F) :=
     or.elim h1
@@ -136,8 +162,11 @@ theorem exercise_7 : (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F) ↔
 (((B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F))) ∨ ((B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F)))) :=
     iff.intro
     (assume h1 : (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F),
+    have h2 : A ∨ B, from h1.left,
+    have h3 : C ∨ D, from (h1.right).left,
+    have h4 : E ∨ F, from (h1.right).right,
     show (((A ∧ (C ∧ E)) ∨ (A ∧ (C ∧ F))) ∨ ((A ∧ (D ∧ E)) ∨ (A ∧ (D ∧ F)))) ∨
-    (((B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F))) ∨ ((B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F)))), from sorry)
+    (((B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F))) ∨ ((B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F)))), from fourth h2 h3 h4)
     (assume h1 : (((A ∧ (C ∧ E)) ∨ (A ∧ (C ∧ F))) ∨ ((A ∧ (D ∧ E)) ∨ (A ∧ (D ∧ F)))) ∨
     (((B ∧ (C ∧ E)) ∨ (B ∧ (C ∧ F))) ∨ ((B ∧ (D ∧ E)) ∨ (B ∧ (D ∧ F)))),
     show (A ∨ B) ∧ (C ∨ D) ∧ (E ∨ F), from first h1)
