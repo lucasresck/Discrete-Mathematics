@@ -138,7 +138,6 @@ theorem position_4_not_twice (path : ¬ x11 ∧ ¬ x12 ∧ ¬ x13 ∧ x14 ∧ x2
 
 -- Non adjacent nodes cannot be adjacent in the path.
 -- My graph is G = {(1, 2), (1, 3), (1, 4), (2, 3)}, so (2, 4) and (3, 4) don't belong to G.
-
 -- If (2, 4) doesn't belong to G, nodes 2 and 4 aren't adjacent, so they can't be adjacent in the path:
 
 theorem first_non_adjacent (path : ¬ x11 ∧ ¬ x12 ∧ ¬ x13 ∧ x14 ∧ x21 ∧ ¬ x22 ∧ ¬ x23 ∧ ¬ x24 ∧
