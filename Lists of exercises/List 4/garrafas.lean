@@ -24,40 +24,47 @@ pede-se apenas a formalização em FOL.
 
 -/
 
-/- Como representar algo que varia no tempo? Se a garrafa maior tem 6
-litros agora, é porque ela tinha 1 litro antes. Podemos representar o
-tempo no domínio! -/
+/- How to represent something that varies in time? If the big bottle
+now has 6L, it's because it had 1L in the past (the little bottle filled
+it with 5L). But we can represent the time in the domain! -/
 
 constant T : Type
 
-/- Vamos criar as garrafas grande (big bottle, BB) e pequena (LB), que
-são predicados que associam a um número natural (volume, em litros) se
-essa garrafa está preenchida com esse volume. As duas garrafas iniciam
-vazias, ou seja, existe um instante de tempo em que elas estão vazias
-nesse instante de tempo:-/
+/- Let's create the Big and the Little Bottles, that are predicates that
+associates a natural number (volume, in liters) to a proposition, with
+the meaning of the bottle is filled with this exactly number of liters.
+-/
 
 constants BB LB : ℕ → T → Prop
+
+/- Both bottles start empty, that is, there's a instant of time when
+they are empty: -/
+
 constants beginBB : ∃ t : T, BB 0 t
 constants beginLB : ∃ t : T, LB 0 t
 
-/- Podemos encher essas garrafas. Ou seja, pra todo volume que a garrafa,
-digamos, grande tem em algum momento, existe algum momento após em que
-ela pode ser cheia: -/
+/- We can fill up the bottles. For all volume that a bottle has in a
+certain time, there's a time after it when the bottle can be filled
+up. -/
 
 constant after : T → T → Prop
 
-variable fillBB : ∀ l : ℕ, ∀ t0 : T, ∃ t : T, (after t t0) ∧ (BB l t0) → BB 7 t
-variable fillLB : ∀ l : ℕ, ∀ t0 : T, ∃ t : T, (after t t0) ∧ (LB l t0) → LB 5 t
+variable fillBB : ∀ l : ℕ, ∀ t0 : T, ∃ t : T,
+                    (after t t0) ∧ (BB l t0) → BB 7 t
 
--- Da mesma maneira, podemos esvaziar as garrafas:
+variable fillLB : ∀ l : ℕ, ∀ t0 : T, ∃ t : T,
+                    (after t t0) ∧ (LB l t0) → LB 5 t
+
+-- In the same way, we can empty the bottles:
 
 variable emptyBB : ∀ l : ℕ, ∀ t0 : T, ∃ t : T, (after t t0) ∧ (BB l t0) → BB 0 t
 variable emptyLB : ∀ l : ℕ, ∀ t0 : T, ∃ t : T, (after t t0) ∧ (LB l t0) → LB 0 t
 
-/- E, claro, podemos transferir os volumes entre as garrafas. Ou seja,
-para todos os volumes que as garrafas tem em algum momento, existe algum
-momento após em que ocorre a transferência e: uma delas fica vazia ou a
-outra fica cheia. Assim: -/
+/- We can also transfer the water between the bottles. That is, for all
+volumes that a bottle can have, for all instants of time, if the bottle
+has this volume in this instant of time, there will be a time after it
+when the water will be transfered: one of the bottles will become empty
+or the other will be filled up. -/
 
 variable BBtoLB : ∀ lBB, ∀ lLB, ∀ t0, ∃ t,
 (after t t0) ∧ (BB lBB t0) ∧ (LB lLB t0) → ((BB (lBB - (5 - lLB)) t) ∧ (LB 5 t))
@@ -66,3 +73,8 @@ variable BBtoLB : ∀ lBB, ∀ lLB, ∀ t0, ∃ t,
 variable LBtoBB : ∀ lBB, ∀ lLB, ∀ t0, ∃ t,
 (after t t0) ∧ (BB lBB t0) ∧ (LB lLB t0) → ((BB 7 t) ∧ (LB (lLB - (7 - lBB)) t))
                                          ∨ ((BB (lBB + lLB) t) ∧ (LB 0 t))
+
+/- Is it possible to store 6L in a bottle? That is, there will be a time
+when the big bottle will have 6L? -/
+
+theorem sixliters : ∃ t : T, BB 6 t := sorry
