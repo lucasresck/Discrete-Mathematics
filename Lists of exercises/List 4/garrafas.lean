@@ -24,57 +24,48 @@ pede-se apenas a formalização em FOL.
 
 -/
 
-/- How to represent something that varies in time? If the big bottle
-now has 6L, it's because it had 1L in the past (the little bottle filled
-it with 5L). But we can represent the time in the domain! -/
+/- How to represent something that changes in time? Now the bottles
+are filled up, byt later they can be empty. We can represent time in
+the domain, through states, that change in time. Let's represent first
+state as z ("zero") in the domain. Each element of the domain will
+have a "sucessor". This is analogous to the Piano axioms.-/
 
 constant T : Type
+constant z : T
+constant s : T → T
 
-/- Let's create the Big and the Little Bottles, that are predicates that
-associates a natural number (volume, in liters) to a proposition, with
-the meaning of the bottle is filled with this exactly number of liters.
--/
+/- Let's use G predicate to infer: G(t, x, y) means that exists a
+possibility that, in state t, the big bottle (the one with 7L) will
+have x liters and the little bottle (5L) will have y liters. That is,
+there is a sequence of steps where we can reach x and y liters at step
+t. For example (and for formalization), at step 0, we can state that
+both bottles are empty: -/
 
-constants BB LB : ℕ → T → Prop
+constant G : T → ℕ → ℕ → Prop
+constant start : G z 0 0
 
-/- Both bottles start empty, that is, there's a instant of time when
-they are empty: -/
+/- Given a step, which bottle can be filled up in next step,
+independently of how many liters it has and which step it is. -/
 
-constants beginBB : ∃ t : T, BB 0 t
-constants beginLB : ∃ t : T, LB 0 t
+constant fill1 : ∀ t : T, ∀ x : ℕ, ∀ y : ℕ, (G t x y) → (G (s t) 7 y)
+constant fill2 : ∀ t : T, ∀ x : ℕ, ∀ y : ℕ, (G t x y) → (G (s t) x 5)
 
-/- We can fill up the bottles. For all volume that a bottle has in a
-certain time, there's a time after it when the bottle can be filled
-up. -/
+-- In the same way, they can be empty:
 
-constant after : T → T → Prop
+constant empty1 : ∀ t : T, ∀ x : ℕ, ∀ y : ℕ, (G t x y) → (G (s t) 0 y)
+constant empty2 : ∀ t : T, ∀ x : ℕ, ∀ y : ℕ, (G t x y) → (G (s t) x 0)
 
-variable fillBB : ∀ l : ℕ, ∀ t0 : T, ∃ t : T,
-                    (after t t0) ∧ (BB l t0) → BB 7 t
+/- But how to tranfer water between these bottles? We have to
+condition in the volume of the bottles at step t, because one may be
+filled up or the other may become empty: -/
 
-variable fillLB : ∀ l : ℕ, ∀ t0 : T, ∃ t : T,
-                    (after t t0) ∧ (LB l t0) → LB 5 t
+constant transfer1 : ∀ t : T, ∀ x : ℕ, ∀ y : ℕ, (G t x y) ∧ (y ≥ 7 - x) → (G (s t) 7 (y - (7 - x)))
+constant transfer2 : ∀ t : T, ∀ x : ℕ, ∀ y : ℕ, (G t x y) ∧ (y < 7 - x) → (G (s t) (x + y) 0)
 
--- In the same way, we can empty the bottles:
+constant transfer3 : ∀ t : T, ∀ x : ℕ, ∀ y : ℕ, (G t x y) ∧ (x ≥ 5 - y) → (G (s t) (x - (5 - y)) 5)
+constant transfer4x : ∀ t : T, ∀ x : ℕ, ∀ y : ℕ, (G t x y) ∧ (x < 5 - y) → (G (s t) 0 (x + y))
 
-variable emptyBB : ∀ l : ℕ, ∀ t0 : T, ∃ t : T, (after t t0) ∧ (BB l t0) → BB 0 t
-variable emptyLB : ∀ l : ℕ, ∀ t0 : T, ∃ t : T, (after t t0) ∧ (LB l t0) → LB 0 t
+/- What was asked to prove is if it's possible to reach 6L with this
+process. -/
 
-/- We can also transfer the water between the bottles. That is, for all
-volumes that a bottle can have, for all instants of time, if the bottle
-has this volume in this instant of time, there will be a time after it
-when the water will be transfered: one of the bottles will become empty
-or the other will be filled up. -/
-
-variable BBtoLB : ∀ lBB, ∀ lLB, ∀ t0, ∃ t,
-(after t t0) ∧ (BB lBB t0) ∧ (LB lLB t0) → ((BB (lBB - (5 - lLB)) t) ∧ (LB 5 t))
-                                         ∨ ((BB 0 t) ∧ (LB (lLB + lBB) t))
-
-variable LBtoBB : ∀ lBB, ∀ lLB, ∀ t0, ∃ t,
-(after t t0) ∧ (BB lBB t0) ∧ (LB lLB t0) → ((BB 7 t) ∧ (LB (lLB - (7 - lBB)) t))
-                                         ∨ ((BB (lBB + lLB) t) ∧ (LB 0 t))
-
-/- Is it possible to store 6L in a bottle? That is, there will be a time
-when the big bottle will have 6L? -/
-
-theorem sixliters : ∃ t : T, BB 6 t := sorry
+theorem sixLiters : ∃ t : T, (G t 6 0) := sorry
