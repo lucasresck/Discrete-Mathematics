@@ -1,5 +1,7 @@
 /-
 
+(X) We agree with sharing this code with the classmates.
+
 Alunos:
  - Lucas Emanuel Resck Domingues
  - Lucas Machado Moschen
