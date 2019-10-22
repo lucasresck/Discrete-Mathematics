@@ -1,8 +1,9 @@
-import data.set
 open set
 
 variable U : Type
 variables A B : set U
+
+lemma eq_of_subset_of_subset {U : Type} {A B : set U} (h1 : A ⊆ B) (h2 : B ⊆ A): A = B := sorry 
 
 lemma first {U : Type} {A B : set U}: powerset (A ∩ B) ⊆ powerset A ∩ powerset B :=
     assume X,
