@@ -1,3 +1,5 @@
+-- Estudante: Lucas Emanuel Resck Domingues
+
 open set
 
 variable U : Type
