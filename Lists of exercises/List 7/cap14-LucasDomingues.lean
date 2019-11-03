@@ -39,7 +39,6 @@ section
 
     include irreflR
     include transR
-    #check irreflexive
 
     theorem antisymmR' {a b : A} (h1 : a ≤ b) (h2 : b ≤ a) :
     a = b :=
