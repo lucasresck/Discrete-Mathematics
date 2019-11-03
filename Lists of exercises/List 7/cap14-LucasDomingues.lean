@@ -1,5 +1,7 @@
 -- Estudante: Lucas Emanuel Resck Domingues
 
+-- Exercise 1
+
 section
     parameters {A : Type} {R : A → A → Prop}
     parameter (irreflR : irreflexive R)
@@ -53,6 +55,8 @@ section
         end
 end
 
+-- Exercise 2
+
 section
     parameters {A : Type} {R : A → A → Prop}
     parameter (reflR : reflexive R)
@@ -73,6 +77,8 @@ section
             exact transR h6 h4
         end
 end
+
+--Exercise 3
 
 section
     parameters {A : Type} {a b c : A} {R : A → A → Prop}
@@ -101,6 +107,8 @@ section
             contradiction
         end
 end
+
+-- Exercise 4
 
 section
     open nat
