@@ -172,6 +172,7 @@ example : ∀ m n : nat, m ≥ n → m = n ∨ m ≥ n + 1 :=
         apply succ_lt_succ,
         exact h8
     end
+    
 --2.e.
 example : ∀ n : nat, 0 ≤ n :=
     begin
