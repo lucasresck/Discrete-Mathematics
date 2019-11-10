@@ -1,3 +1,5 @@
+-- Estudante: Lucas Emanuel Resck Domingues
+
 open nat
 
 --1.a.
